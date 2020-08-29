@@ -1,7 +1,8 @@
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.Dictionary;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 
 public class SubjectArrange {
@@ -37,6 +38,27 @@ public class SubjectArrange {
                 }
             }
             return null;
+        }
+
+        static Integer index_của_tiết_đầu_tiên_ngày_hôm_nay(int index) {
+            for(int i = 0; i < tiết_đầu.length; i++) {
+                if(index > tiết_đầu[i]) {
+                    return tiết_đầu[i];
+                }
+            }
+            return null;
+        }
+
+        static Subject[] môn_học_từ_hôm_qua(Subject[] mons, int index) {
+            Integer startIndex = index_của_tiết_đầu_tiên_ngày_hôm_trước(index);
+            if(startIndex == null) {
+                startIndex = index_của_tiết_đầu_tiên_ngày_hôm_nay(index);
+            }
+            if(startIndex == null) {
+                return null;
+            }
+            ArrayList<Subject> output = new ArrayList<>();
+            return Arrays.copyOfRange(mons, startIndex, index);
         }
     }
 
