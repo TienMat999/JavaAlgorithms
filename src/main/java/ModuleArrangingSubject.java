@@ -49,15 +49,16 @@ public class ModuleArrangingSubject {
 
         @Override
         public boolean acceptableForGoNext(ModuleArrangingSubject.Subject[] all, int index) {
-//            if(listSubjectValidationInfo.hợp_lệ(all, index) == false) {
-//                return false;
-//            }
 
             if(isBeside3(all, index)) {
                 return false;
             }
 
             if(hasSameSubjectInDay(all, index)) {
+                return false;
+            }
+
+            if(listSubjectValidationInfo.hợp_lệ(all, index) == false) {
                 return false;
             }
 
@@ -137,21 +138,22 @@ public class ModuleArrangingSubject {
 
 
         boolean hợp_lệ(Subject[] subs, int si) {
-            int li = lessionIndex(subs, si);
+            int li = startLessionIndex(subs, si);
+
             if(!tiết_không_vượt_quá_ngày(subs,li, si)) {
                 return false;
             }
 //            Subject[] các_môn_học_trong_2_ngày_gần_đây = list_môn_học_từ_hôm_qua(subs, li);
 
-            if(là_Môn_cuối_cùng_trong_ngày(li, si, subs)) {
-                Subject[] các_môn_học_trong_1_ngày_gần_đây = list_môn_học_từ_hôm_nay(subs, li);
-                if(đếm_số_tiết_XH(các_môn_học_trong_1_ngày_gần_đây) > số_môn_xh_max_trong_1_ngày) {
-                    return false;
-                }
-                if(đếm_số_tiết_TN(các_môn_học_trong_1_ngày_gần_đây) > số_môn_tn_max_trong_1_ngày) {
-                    return false;
-                }
-            }
+//            if(là_Môn_cuối_cùng_trong_ngày(li, si, subs)) {
+//                Subject[] các_môn_học_trong_1_ngày_gần_đây = list_môn_học_từ_hôm_nay(subs, li);
+//                if(đếm_số_tiết_XH(các_môn_học_trong_1_ngày_gần_đây) > số_môn_xh_max_trong_1_ngày) {
+//                    return false;
+//                }
+//                if(đếm_số_tiết_TN(các_môn_học_trong_1_ngày_gần_đây) > số_môn_tn_max_trong_1_ngày) {
+//                    return false;
+//                }
+//            }
             return true;
         }
 
@@ -176,7 +178,7 @@ public class ModuleArrangingSubject {
         }
 
 
-        int lessionIndex(Subject[] subs, int si) {
+        int startLessionIndex(Subject[] subs, int si) {
             int output = 0;
             for(int i = 0; i < subs.length && i < si; i++) {
                 output += subs[i].số_tiết;
@@ -184,7 +186,7 @@ public class ModuleArrangingSubject {
             return output;
         }
 
-        int subjectIndex(Subject[] subs, int li) {
+        int startSubjectIndex(Subject[] subs, int li) {
             int start = 0;
             for(int si = 0; si < subs.length; si++) {
                 int end = start + subs[si].số_tiết;
@@ -206,15 +208,21 @@ public class ModuleArrangingSubject {
             return false;
         }
 
+        void log(String text, Object... args) {
+            System.out.println(String.format(text, args));
+        }
+
         boolean tiết_không_vượt_quá_ngày(Subject[] subs, int li, int si) {
             int số_tiết = subs[si].số_tiết;
             for(int i = 0; i < tiết_cuối.length; i++) {
                 int first = tiết_đầu[i];
                 int last = tiết_cuối[i];
-                boolean valid = li >= first && (li + số_tiết) <= last;
-                if(valid) {
-                    return true;
-                }
+                if(first > li) { break; }
+                log("si = %s, li = %s, TietDau = %s, TietCuoi = %s", si, li, first, last);
+                boolean valid = (li >= first) && ((li + số_tiết) <= last);
+                if(valid) { return true; }
+//                boolean unValid = (li >= first) && (li <= last) && ((li + số_tiết) > last);
+//                if(unValid) { return false; }
             }
             return false;
         }
