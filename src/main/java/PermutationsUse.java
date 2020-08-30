@@ -1,70 +1,8 @@
 import java.util.*;
 
 public class PermutationsUse<DATA> {
-
-
     public PermutationsUse(PermutationsListener<DATA> listener) {
         this.listener = listener;
-    }
-
-    public static void main(String[] args) {
-        PermutationsListener<Integer> listener = new PermutationsListener<Integer>() {
-            @Override
-            public void onResult(List<Integer> array) {
-                System.out.println(array);
-            }
-
-            @Override
-            public boolean acceptableForGoNext(Integer[] all, int index) {
-                if(isBeside3(all, index)) {
-                    return false;
-                }
-
-                if(hasSameSubjectInDay(all, index)) {
-                    return false;
-                }
-                return true;
-            }
-
-            private boolean hasSameSubjectInDay(Integer[] all, int index) {
-                if(index % 4 != 0 || index == 0) {
-                    return false;
-                }
-
-                if(all[index - 1] == all[index]) {
-                    return true;
-                }
-                if(all[index - 2] == all[index]) {
-                    return true;
-                }
-                if(all[index - 3] == all[index]) {
-                    return true;
-                }
-
-                if(all[index - 4] == all[index]) {
-                    return true;
-                }
-
-                return false;
-            }
-
-            private boolean isBeside3(Integer[] all, int index) {
-                if(index < all.length) {
-                    if(index >= 1 && all[index - 1] == all[index]) {
-                        return true;
-                    }
-                    if(index >= 2 && all[index - 2] == all[index]) {
-                        return true;
-                    }
-                    if(index >= 3 && all[index - 3] == all[index]) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        };
-        PermutationsUse<Integer> permute = new PermutationsUse<Integer>(listener);
-        System.out.println(permute.permuteUnique(new Integer[] { 1,1,2,2,3,3,4,4,5,5}).size());
     }
 
     private final PermutationsListener<DATA> listener;
