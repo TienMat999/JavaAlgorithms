@@ -52,13 +52,35 @@ public class SubjectArrange {
         static Subject[] môn_học_từ_hôm_qua(Subject[] mons, int index) {
             Integer startIndex = index_của_tiết_đầu_tiên_ngày_hôm_trước(index);
             if(startIndex == null) {
-                startIndex = index_của_tiết_đầu_tiên_ngày_hôm_nay(index);
+                return null;
             }
+            int runIndex = 0;
+            ArrayList<Subject> output = new ArrayList<>();
+            for(Subject mon: mons) {
+                if(runIndex >= startIndex) {
+                    output.add(mon);
+                }
+                runIndex += mon.số_tiết;
+            }
+
+            return output.toArray(new Subject[output.size()]);
+        }
+
+        static Subject[] môn_học_từ_hôm_nay(Subject[] mons, int index) {
+            Integer startIndex = index_của_tiết_đầu_tiên_ngày_hôm_nay(index);
             if(startIndex == null) {
                 return null;
             }
+            int runIndex = 0;
             ArrayList<Subject> output = new ArrayList<>();
-            return Arrays.copyOfRange(mons, startIndex, index);
+            for(Subject mon: mons) {
+                if(runIndex >= startIndex) {
+                    output.add(mon);
+                }
+                runIndex += mon.số_tiết;
+            }
+
+            return output.toArray(new Subject[output.size()]);
         }
     }
 
