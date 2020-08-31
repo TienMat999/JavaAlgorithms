@@ -21,7 +21,7 @@ public class ModuleArrangingSubject {
         subjects.add(mon("2:Hoa:TN"));
         subjects.add(mon("2:Van:XH"));
         subjects.add(mon("2:Van:XH"));
-//        subjects.add(mon("1:Sinh:XH"));
+        subjects.add(mon("1:Sinh:XH"));
 //        subjects.add(mon("1:Su:XH"));
 //        subjects.add(mon("1:Dia:XH"));
         PermutationsUse<ModuleArrangingSubject.Subject> permute = new PermutationsUse<ModuleArrangingSubject.Subject>(listener);
@@ -58,9 +58,9 @@ public class ModuleArrangingSubject {
                 return false;
             }
 
-            if(listSubjectValidationInfo.hopLe(all, index) == false) {
-                return false;
-            }
+//            if(listSubjectValidationInfo.hopLe(all, index) == false) {
+//                return false;
+//            }
 
             return true;
         }
