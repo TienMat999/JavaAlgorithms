@@ -58,9 +58,9 @@ public class ModuleArrangingSubject {
                 return false;
             }
 
-//            if(listSubjectValidationInfo.hopLe(all, index) == false) {
-//                return false;
-//            }
+            if(listSubjectValidationInfo.hopLe(all, index) == false) {
+                return false;
+            }
 
             return true;
         }
@@ -133,8 +133,8 @@ public class ModuleArrangingSubject {
         int soTietTrong1Ngay = 8;
         int soMonTuNhienMaxTrongNgay = 6;
         int soMonXahoiMaxTrongNgay = 6;
-        int[] tietDau = new int[] { 5, 13, 21, 29, 37, 45 };
-        int[] tietCuoi = new int[] { 0, 6, 14, 22, 30, 38 };
+        int[] tietCuoi = new int[] { 5, 13, 21, 29, 37, 45 };
+        int[] tietDau = new int[] { 0, 6, 14, 22, 30, 38 };
 
 
         boolean hopLe(Subject[] subs, int si) {
@@ -217,8 +217,8 @@ public class ModuleArrangingSubject {
             for(int i = 0; i < tietDau.length; i++) {
                 int first = tietDau[i];
                 int last = tietDau[i];
-                if(first > li) { break; }
                 log("si = %s, li = %s, TietDau = %s, TietCuoi = %s", si, li, first, last);
+                if(first > li) { break; }
                 boolean valid = (li >= first) && ((li + soTiet) <= last);
                 if(valid) { return true; }
 //                boolean unValid = (li >= first) && (li <= last) && ((li + số_tiết) > last);
