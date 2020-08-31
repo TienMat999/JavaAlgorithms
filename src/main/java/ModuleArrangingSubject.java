@@ -14,7 +14,7 @@ public class ModuleArrangingSubject {
         ArrayList<ModuleArrangingSubject.Subject> subjects = new ArrayList<>();
         subjects.add(mon("2:Toan:TN"));
         subjects.add(mon("2:Toan:TN"));
-        subjects.add(mon("1:Toan:TN"));
+        subjects.add(mon("2:Toan:TN"));
         subjects.add(mon("2:Ly:TN"));
         subjects.add(mon("2:Ly:TN"));
         subjects.add(mon("2:Hoa:TN"));
@@ -24,6 +24,9 @@ public class ModuleArrangingSubject {
         subjects.add(mon("1:Sinh:XH"));
         subjects.add(mon("1:Su:XH"));
         subjects.add(mon("1:Dia:XH"));
+        subjects.add(mon("1:TD:XH"));
+        subjects.add(mon("1:GDCD:XH"));
+        subjects.add(mon("1:KT:TN"));
         PermutationsUse<ModuleArrangingSubject.Subject> permute = new PermutationsUse<ModuleArrangingSubject.Subject>(listener);
 
         System.out.println(
@@ -61,7 +64,7 @@ public class ModuleArrangingSubject {
             if(listSubjectValidationInfo.hopLe(all, index) == false) {
                 return false;
             }
-
+            log("acceptableForGoNext index = %s : TRUE", index);
             return true;
         }
 
@@ -129,6 +132,10 @@ public class ModuleArrangingSubject {
         }
     }
 
+    static void log(String text, Object... args) {
+        System.out.println(String.format(text, args));
+    }
+
     static class ListSubjectValidation {
         int soTietTrong1Ngay = 8;
         int soMonTuNhienMaxTrongNgay = 6;
@@ -141,6 +148,7 @@ public class ModuleArrangingSubject {
             int li = startLessionIndex(subs, si);
 
             if(!tietKhongVuotQuaNgay(subs,li, si)) {
+                log("tietKhongVuotQuaNgay li = %s, si = %s FALSE", li, si);
                 return false;
             }
 //            Subject[] các_môn_trong_2_ngày_gần_đây = list_môn_từ_hôm_qua(subs, li);
@@ -206,10 +214,6 @@ public class ModuleArrangingSubject {
                 }
             }
             return false;
-        }
-
-        void log(String text, Object... args) {
-            System.out.println(String.format(text, args));
         }
 
         boolean tietKhongVuotQuaNgay(Subject[] subs, int li, int si) {
