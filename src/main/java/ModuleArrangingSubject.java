@@ -22,8 +22,8 @@ public class ModuleArrangingSubject {
         subjects.add(mon("2:Van:XH"));
         subjects.add(mon("2:Van:XH"));
         subjects.add(mon("1:Sinh:XH"));
-//        subjects.add(mon("1:Su:XH"));
-//        subjects.add(mon("1:Dia:XH"));
+        subjects.add(mon("1:Su:XH"));
+        subjects.add(mon("1:Dia:XH"));
         PermutationsUse<ModuleArrangingSubject.Subject> permute = new PermutationsUse<ModuleArrangingSubject.Subject>(listener);
 
         System.out.println(
@@ -216,11 +216,14 @@ public class ModuleArrangingSubject {
             int soTiet = subs[si].soTiet;
             for(int i = 0; i < tietDau.length; i++) {
                 int first = tietDau[i];
-                int last = tietDau[i];
-                log("si = %s, li = %s, TietDau = %s, TietCuoi = %s", si, li, first, last);
+                int last = tietCuoi[i];
+
                 if(first > li) { break; }
                 boolean valid = (li >= first) && ((li + soTiet) <= last);
-                if(valid) { return true; }
+                if(valid) {
+                    log("si = %s, li = %s, soTiet = %s, TietDau = %s, TietCuoi = %s", si, li, soTiet, first, last);
+                    return true;
+                }
 //                boolean unValid = (li >= first) && (li <= last) && ((li + số_tiết) > last);
 //                if(unValid) { return false; }
             }
