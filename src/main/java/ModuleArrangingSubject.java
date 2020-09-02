@@ -135,9 +135,17 @@ public class ModuleArrangingSubject {
         int soTietTrong1Ngay = 8;
         int soMonTuNhienMaxTrongNgay = 6;
         int soMonXahoiMaxTrongNgay = 6;
-        int[] tietCuoi = new int[]{1, 5, 9, 13, 17, 21, 25, 29, 33, 37};
-        int[] tietDau = new int[]{0, 2, 6, 10, 14, 18, 22, 26, 30, 34};
+        int[] tietCuoi = parseInts("1\t3\t5\t7\t9\t11\t13\t15\t17\t19\t21\t23\t25\t27\t29\t31\t33\t35\t37");
+        int[] tietDau = parseInts("0\t2\t4\t6\t8\t10\t12\t14\t16\t18\t20\t22\t24\t26\t28\t30\t32\t34\t36");
 
+        static int[] parseInts(String text) {
+            String[] strings = text.trim().split("\t");
+            int[] ints = new int[strings.length];
+            for (int i = 0; i < strings.length; i++) {
+                ints[i] = Integer.parseInt(strings[i]);
+            }
+            return ints;
+        }
 
         boolean hopLe(Subject[] subs, int si) {
 //            log("hople si = %s", si);
