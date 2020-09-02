@@ -23,7 +23,7 @@ public class ModuleArrangingSubject {
         subjects.add(mon("2:Van:XH"));
         subjects.add(mon("1:Sinh:XH"));
         subjects.add(mon("1:Su:XH"));
-//        subjects.add(mon("1:Dia:XH"));
+        subjects.add(mon("1:Dia:XH"));
         subjects.add(mon("1:TD:XH"));
         subjects.add(mon("1:GDCD:XH"));
         subjects.add(mon("1:KT:TN"));
