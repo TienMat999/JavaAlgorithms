@@ -18,12 +18,12 @@ public class ModuleArrangingSubject {
         subjects.add(mon("2:Ly:TN"));
         subjects.add(mon("2:Ly:TN"));
         subjects.add(mon("2:Hoa:TN"));
-        subjects.add(mon("2:Hoa:TN"));
-        subjects.add(mon("2:Van:XH"));
-        subjects.add(mon("2:Van:XH"));
+//        subjects.add(mon("2:Hoa:TN"));
+//        subjects.add(mon("2:Van:XH"));
+//        subjects.add(mon("2:Van:XH"));
         subjects.add(mon("1:Sinh:XH"));
         subjects.add(mon("1:Su:XH"));
-        subjects.add(mon("1:Dia:XH"));
+//        subjects.add(mon("1:Dia:XH"));
         subjects.add(mon("1:TD:XH"));
         subjects.add(mon("1:GDCD:XH"));
         subjects.add(mon("1:KT:TN"));
@@ -52,19 +52,15 @@ public class ModuleArrangingSubject {
 
         @Override
         public boolean acceptableForGoNext(ModuleArrangingSubject.Subject[] all, int index) {
+            if(index > 5) log("acceptableForGoNext index = %s", index);
 
-            if(isBeside3(all, index)) {
-                return false;
-            }
-
-            if(hasSameSubjectInDay(all, index)) {
-                return false;
-            }
+            if(isBeside3(all, index))  return false;
+            if(hasSameSubjectInDay(all, index)) return false;
 
             if(listSubjectValidationInfo.hopLe(all, index) == false) {
                 return false;
             }
-            log("acceptableForGoNext index = %s : TRUE", index);
+
             return true;
         }
 
@@ -145,10 +141,10 @@ public class ModuleArrangingSubject {
 
 
         boolean hopLe(Subject[] subs, int si) {
+//            log("hople si = %s", si);
             int li = startLessionIndex(subs, si);
 
-            if(!tietKhongVuotQuaNgay(subs,li, si)) {
-                log("tietKhongVuotQuaNgay li = %s, si = %s FALSE", li, si);
+            if(tietVuotQuaNgay(subs,li, si)) {
                 return false;
             }
 //            Subject[] các_môn_trong_2_ngày_gần_đây = list_môn_từ_hôm_qua(subs, li);
@@ -187,20 +183,18 @@ public class ModuleArrangingSubject {
 
 
         int startLessionIndex(Subject[] subs, int si) {
-            int output = 0;
-            for(int i = 0; i < subs.length && i < si; i++) {
-                output += subs[i].soTiet;
+            int tiet = tietDau[0];
+            for(int i = 0; i < si; i++) {
+                tiet += subs[i].soTiet;
             }
-            return output;
+            return tiet;
         }
 
         int startSubjectIndex(Subject[] subs, int li) {
             int start = 0;
             for(int si = 0; si < subs.length; si++) {
                 int end = start + subs[si].soTiet;
-                if(li >= start && li <= end) {
-                    return si;
-                }
+                if(li >= start && li <= end) return si;
                 start = end;
             }
             return 0;
@@ -216,20 +210,17 @@ public class ModuleArrangingSubject {
             return false;
         }
 
-        boolean tietKhongVuotQuaNgay(Subject[] subs, int li, int si) {
+        boolean tietVuotQuaNgay(Subject[] subs, int li, int si) {
             int soTiet = subs[si].soTiet;
-            for(int i = 0; i < tietDau.length; i++) {
-                int first = tietDau[i];
-                int last = tietCuoi[i];
 
-                if(first > li) { break; }
-                boolean valid = (li >= first) && ((li + soTiet) <= last);
-                if(valid) {
-                    log("si = %s, li = %s, soTiet = %s, TietDau = %s, TietCuoi = %s", si, li, soTiet, first, last);
+            if(li > 5) log("li = %s", li);
+
+            for(int lastIndexInDay: tietCuoi) {
+                boolean invalid = (li <= lastIndexInDay) && ((li + soTiet) > lastIndexInDay);
+                if(invalid) {
+                    log("li = %s, lastIndexInDay = %s", li, lastIndexInDay);
                     return true;
                 }
-//                boolean unValid = (li >= first) && (li <= last) && ((li + số_tiết) > last);
-//                if(unValid) { return false; }
             }
             return false;
         }

@@ -6,6 +6,7 @@ public class PermutationsUse<DATA> {
     }
 
     private final PermutationsListener<DATA> listener;
+
     public List<List<DATA>> permuteUnique(DATA[] nums) {
         List<List<DATA>> bigList = new ArrayList<>();
         Arrays.sort(nums);
@@ -15,24 +16,27 @@ public class PermutationsUse<DATA> {
 
     private void permute(DATA[] nums, int index, List<List<DATA>> allResults) {
         if (index == nums.length) {
-            List result = new ArrayList<Integer>(nums.length);
+            List result = new ArrayList<DATA>(nums.length);
             for (DATA num : nums)
                 result.add(num);
             System.out.println(result);
+//            nums.clone()
             allResults.add(result);
             return;
         }
-
-        Set<DATA> dups = new HashSet<>();
+        Set<DATA> checkDuplicated = new HashSet<>();
         for (int i = index; i < nums.length; i++) {
-            if (dups.add(nums[i])) {
-                swap(nums, i, index);
-                if(listener.acceptableForGoNext(nums, index)) {
-                    permute(nums, index + 1, allResults);
-                }
-                swap(nums, i, index);
+            boolean isCheckDupPassed = checkDuplicated.add(nums[i]);
+            if (!isCheckDupPassed) {
+                continue;
             }
+            swap(nums, i, index);
+            if (listener.acceptableForGoNext(nums, index)) {
+                permute(nums, index + 1, allResults);
+            }
+            swap(nums, i, index);
         }
+
     }
 
     private void swap(DATA[] nums, int i, int index) {
