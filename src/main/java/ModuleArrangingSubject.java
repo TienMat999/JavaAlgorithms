@@ -18,9 +18,9 @@ public class ModuleArrangingSubject {
         subjects.add(mon("2:Ly:TN"));
         subjects.add(mon("2:Ly:TN"));
         subjects.add(mon("2:Hoa:TN"));
-//        subjects.add(mon("2:Hoa:TN"));
-//        subjects.add(mon("2:Van:XH"));
-//        subjects.add(mon("2:Van:XH"));
+        subjects.add(mon("2:Hoa:TN"));
+        subjects.add(mon("2:Van:XH"));
+        subjects.add(mon("2:Van:XH"));
         subjects.add(mon("1:Sinh:XH"));
         subjects.add(mon("1:Su:XH"));
 //        subjects.add(mon("1:Dia:XH"));
@@ -52,12 +52,10 @@ public class ModuleArrangingSubject {
 
         @Override
         public boolean acceptableForGoNext(ModuleArrangingSubject.Subject[] all, int index) {
-            if(index > 5) log("acceptableForGoNext index = %s", index);
+            if (isBeside3(all, index)) return false;
+            if (hasSameSubjectInDay(all, index)) return false;
 
-            if(isBeside3(all, index))  return false;
-            if(hasSameSubjectInDay(all, index)) return false;
-
-            if(listSubjectValidationInfo.hopLe(all, index) == false) {
+            if (listSubjectValidationInfo.hopLe(all, index) == false) {
                 return false;
             }
 
@@ -65,19 +63,19 @@ public class ModuleArrangingSubject {
         }
 
         private boolean hasSameSubjectInDay(ModuleArrangingSubject.Subject[] subs, int si) {
-            if(si > 0 && subs[si - 1].equals(subs[si]) ) {
+            if (si > 0 && subs[si - 1].equals(subs[si])) {
                 return true;
             }
 
-            if(si > 1 && subs[si - 2].equals(subs[si])) {
+            if (si > 1 && subs[si - 2].equals(subs[si])) {
                 return true;
             }
 
-            if(si > 2 && subs[si - 3].equals(subs[si])) {
+            if (si > 2 && subs[si - 3].equals(subs[si])) {
                 return true;
             }
 
-            if(si > 3 && subs[si - 4].equals(subs[si])) {
+            if (si > 3 && subs[si - 4].equals(subs[si])) {
                 return true;
             }
 
@@ -85,14 +83,14 @@ public class ModuleArrangingSubject {
         }
 
         private boolean isBeside3(ModuleArrangingSubject.Subject[] subs, int si) {
-            if(si < subs.length) {
-                if(si >= 1 && subs[si - 1] == subs[si]) {
+            if (si < subs.length) {
+                if (si >= 1 && subs[si - 1] == subs[si]) {
                     return true;
                 }
-                if(si >= 2 && subs[si - 2] == subs[si]) {
+                if (si >= 2 && subs[si - 2] == subs[si]) {
                     return true;
                 }
-                if(si >= 3 && subs[si - 3] == subs[si]) {
+                if (si >= 3 && subs[si - 3] == subs[si]) {
                     return true;
                 }
             }
@@ -113,6 +111,7 @@ public class ModuleArrangingSubject {
             tenMonHoc = codes[1];
             laMonTuNhien = codes[2] == "TN";
         }
+
         String tenMonHoc;
         int soTiet;
         boolean laMonTuNhien;
@@ -136,15 +135,15 @@ public class ModuleArrangingSubject {
         int soTietTrong1Ngay = 8;
         int soMonTuNhienMaxTrongNgay = 6;
         int soMonXahoiMaxTrongNgay = 6;
-        int[] tietCuoi = new int[] { 5, 13, 21, 29, 37, 45 };
-        int[] tietDau = new int[] { 0, 6, 14, 22, 30, 38 };
+        int[] tietCuoi = new int[]{1, 5, 9, 13, 17, 21, 25, 29, 33, 37};
+        int[] tietDau = new int[]{0, 2, 6, 10, 14, 18, 22, 26, 30, 34};
 
 
         boolean hopLe(Subject[] subs, int si) {
 //            log("hople si = %s", si);
             int li = startLessionIndex(subs, si);
 
-            if(tietVuotQuaNgay(subs,li, si)) {
+            if (tietVuotQuaBuoi(subs, li, si)) {
                 return false;
             }
 //            Subject[] các_môn_trong_2_ngày_gần_đây = list_môn_từ_hôm_qua(subs, li);
@@ -163,8 +162,8 @@ public class ModuleArrangingSubject {
 
         int demSoTietTuNhien(Subject[] subs) {
             int count = 0;
-            for(Subject sub: subs) {
-                if(sub.laMonTuNhien) {
+            for (Subject sub : subs) {
+                if (sub.laMonTuNhien) {
                     count += sub.soTiet;
                 }
             }
@@ -173,8 +172,8 @@ public class ModuleArrangingSubject {
 
         int demSoTietXaHoi(Subject[] subs) {
             int count = 0;
-            for(Subject sub: subs) {
-                if(!sub.laMonTuNhien) {
+            for (Subject sub : subs) {
+                if (!sub.laMonTuNhien) {
                     count += sub.soTiet;
                 }
             }
@@ -184,7 +183,7 @@ public class ModuleArrangingSubject {
 
         int startLessionIndex(Subject[] subs, int si) {
             int tiet = tietDau[0];
-            for(int i = 0; i < si; i++) {
+            for (int i = 0; i < si; i++) {
                 tiet += subs[i].soTiet;
             }
             return tiet;
@@ -192,9 +191,9 @@ public class ModuleArrangingSubject {
 
         int startSubjectIndex(Subject[] subs, int li) {
             int start = 0;
-            for(int si = 0; si < subs.length; si++) {
+            for (int si = 0; si < subs.length; si++) {
                 int end = start + subs[si].soTiet;
-                if(li >= start && li <= end) return si;
+                if (li >= start && li <= end) return si;
                 start = end;
             }
             return 0;
@@ -202,32 +201,33 @@ public class ModuleArrangingSubject {
 
         boolean laMonCuoiCungTrongNgay(int li, int si, Subject[] subs) {
             int soTiet = subs[si].soTiet;
-            for(int tiet: tietDau) {
-                if((li + soTiet) == tiet) {
+            for (int tiet : tietDau) {
+                if ((li + soTiet) == tiet) {
                     return true;
                 }
             }
             return false;
         }
 
-        boolean tietVuotQuaNgay(Subject[] subs, int li, int si) {
+        boolean tietVuotQuaBuoi(Subject[] subs, int li, int si) {
             int soTiet = subs[si].soTiet;
+            for (int day = 0; day < tietCuoi.length; day++) {
 
-            if(li > 5) log("li = %s", li);
+                int first = tietDau[day];
+                int last = tietCuoi[day];
 
-            for(int lastIndexInDay: tietCuoi) {
-                boolean invalid = (li <= lastIndexInDay) && ((li + soTiet) > lastIndexInDay);
-                if(invalid) {
-                    log("li = %s, lastIndexInDay = %s", li, lastIndexInDay);
+                if (first > li || last < li) continue;
+                if ((li + soTiet - 1) > last) {
                     return true;
                 }
             }
+
             return false;
         }
 
         Integer indexCuaTietDauTienNgayHomQua(int li) {
-            for(int i = 1; i < tietDau.length; i++) {
-                if(li > tietDau[i]) {
+            for (int i = 1; i < tietDau.length; i++) {
+                if (li > tietDau[i]) {
                     return tietDau[i - 1];
                 }
             }
@@ -235,8 +235,8 @@ public class ModuleArrangingSubject {
         }
 
         Integer indexCuaTietDauTienNgayHomNay(int li) {
-            for(int i = 0; i < tietDau.length; i++) {
-                if(li > tietDau[i]) {
+            for (int i = 0; i < tietDau.length; i++) {
+                if (li > tietDau[i]) {
                     return tietDau[i];
                 }
             }
@@ -245,13 +245,13 @@ public class ModuleArrangingSubject {
 
         Subject[] listMonHocTuHomQUa(Subject[] mons, int li) {
             Integer startIndex = indexCuaTietDauTienNgayHomQua(li);
-            if(startIndex == null) {
+            if (startIndex == null) {
                 return null;
             }
             int runIndex = 0;
             ArrayList<Subject> output = new ArrayList<>();
-            for(Subject mon: mons) {
-                if(runIndex >= startIndex) {
+            for (Subject mon : mons) {
+                if (runIndex >= startIndex) {
                     output.add(mon);
                 }
                 runIndex += mon.soTiet;
@@ -262,13 +262,13 @@ public class ModuleArrangingSubject {
 
         Subject[] listMonHocTrongHomNay(Subject[] mons, int li) {
             Integer startIndex = indexCuaTietDauTienNgayHomNay(li);
-            if(startIndex == null) {
+            if (startIndex == null) {
                 return null;
             }
             int runIndex = 0;
             ArrayList<Subject> output = new ArrayList<>();
-            for(Subject mon: mons) {
-                if(runIndex >= startIndex) {
+            for (Subject mon : mons) {
+                if (runIndex >= startIndex) {
                     output.add(mon);
                 }
                 runIndex += mon.soTiet;
