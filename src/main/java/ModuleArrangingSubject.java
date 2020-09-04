@@ -1,16 +1,14 @@
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 public class ModuleArrangingSubject {
 
     public static void main(String[] args) {
         ListSubjectValidation listSubjectValidationInfo = new ListSubjectValidation();
+
         ModuleArrangingSubject.ClassPermutationsListener listener = new ModuleArrangingSubject.ClassPermutationsListener(listSubjectValidationInfo);
 
         ArrayList<ModuleArrangingSubject.Subject> subjects = new ArrayList<>();
@@ -34,6 +32,22 @@ public class ModuleArrangingSubject {
         subjects.add(mon("2:AV:XH"));
         subjects.add(mon("2:AV:XH"));
         subjects.add(mon("1:AV:XH"));
+
+        listSubjectValidationInfo.addOffAspiration("Ly", 14, 21);
+        listSubjectValidationInfo.addOffAspiration("Dia", 14, 21);
+        listSubjectValidationInfo.addOffAspiration("Su", 14, 21);
+
+        listSubjectValidationInfo.addOffAspiration("Toan", 6, 13);
+        listSubjectValidationInfo.addOffAspiration("AV", 6, 13);
+        listSubjectValidationInfo.addOffAspiration("KTCN", 6, 13);
+
+        listSubjectValidationInfo.addOffAspiration("Hoa", 22, 29);
+        listSubjectValidationInfo.addOffAspiration("TD", 22, 29);
+        listSubjectValidationInfo.addOffAspiration("Van", 22, 29);
+
+        listSubjectValidationInfo.addOffAspiration("GDCD", 30, 37);
+        listSubjectValidationInfo.addOffAspiration("Sinh", 30, 37);
+
         PermutationsUse<ModuleArrangingSubject.Subject> permute = new PermutationsUse<ModuleArrangingSubject.Subject>(listener);
 
         System.out.println(
@@ -43,6 +57,17 @@ public class ModuleArrangingSubject {
 
     static ModuleArrangingSubject.Subject mon(String code) {
         return new ModuleArrangingSubject.Subject(code);
+    }
+
+    @Data
+    static class TeacherAspiration {
+        final String subName;
+        final int[] offLessionIndex;
+
+        TeacherAspiration(String subName, int[] offLessionIndex) {
+            this.subName = subName;
+            this.offLessionIndex = offLessionIndex;
+        }
     }
 
     static class ClassPermutationsListener implements PermutationsListener<Subject> {
@@ -61,10 +86,7 @@ public class ModuleArrangingSubject {
         public boolean acceptableForGoNext(ModuleArrangingSubject.Subject[] all, int index) {
             if (isBeside3(all, index)) return false;
             if (hasSameSubjectInDay(all, index)) return false;
-
-            if (listSubjectValidationInfo.hopLe(all, index) == false) {
-                return false;
-            }
+            if (listSubjectValidationInfo.hopLe(all, index) == false) return false;
 
             return true;
         }
@@ -146,6 +168,32 @@ public class ModuleArrangingSubject {
         int[] tietDauSlot = parseInts("0\t2\t4\t6\t8\t10\t12\t14\t16\t18\t20\t22\t24\t26\t28\t30\t32\t34\t36");
         int[] tietDauNgay = parseInts("0\t6\t14\t22\t30");
         int[] tietCuoiNgay = parseInts("5\t13\t21\t29\t37");
+        ArrayList<TeacherAspiration> teacherAspirations = new ArrayList<>();
+
+        public void addOffAspiration(String name, int... offs) {
+            teacherAspirations.add(new TeacherAspiration(name, Arrays.stream(offs).toArray()));
+        }
+
+        public void addOffAspiration(String name, int from, int to) {
+            int[] tempt = new int[to - from + 1];
+            for(int i = from; i <= to; i++) {
+                tempt[i - from] = i;
+            }
+            teacherAspirations.add(new TeacherAspiration(name, tempt));
+        }
+
+        boolean validAspiration(String sub, int wli) {
+            for(TeacherAspiration a: teacherAspirations) {
+                if(a.subName.equals(sub)) {
+                    for(int i: a.offLessionIndex) {
+                        if(i == wli) {
+                            return false;
+                        }
+                    }
+                }
+            }
+            return true;
+        }
 
         static int[] parseInts(String text) {
             String[] strings = text.trim().split("\t");
@@ -157,17 +205,22 @@ public class ModuleArrangingSubject {
         }
 
         boolean hopLe(Subject[] subs, int si) {
-            int li = startLessionIndex(subs, si);
+            int li = startLessionIndexInWeek(subs, si);
 
             if (tietVuotQuaBuoi(subs, li, si)) {
                 return false;
             }
 
+            if(!validAspiration(subs[si].tenMonHoc, li)) {
+                return false;
+            }
+
             if (laMonCuoiCungTrongNgay(li, si, subs)) {
                 Subject[] monhocHomNays = listTietHocTrongHomNay(subs, li, si);
-                if (demSoTietTuNhien(monhocHomNays) > soMonTuNhienMaxTrongNgay) return false;
-                if (demSoTietXaHoi(monhocHomNays) > soMonXahoiMaxTrongNgay) return false;
-                if (soMonHoc(monhocHomNays) > soMonToiDaTrongHomNay(li)) return false;
+
+//                if (demSoTietTuNhien(monhocHomNays) > soMonTuNhienMaxTrongNgay) return false;
+//                if (demSoTietXaHoi(monhocHomNays) > soMonXahoiMaxTrongNgay) return false;
+//                if (soMonHoc(monhocHomNays) > soMonToiDaTrongHomNay(li)) return false;
             }
             return true;
         }
@@ -192,8 +245,7 @@ public class ModuleArrangingSubject {
             return count;
         }
 
-
-        int startLessionIndex(Subject[] subs, int si) {
+        int startLessionIndexInWeek(Subject[] subs, int si) {
             int tiet = 0;
             for (int i = 0; i < si; i++) {
                 tiet += subs[i].soTiet;
@@ -264,9 +316,8 @@ public class ModuleArrangingSubject {
 
         private Integer indexCuaTietDauTienNgayHomNay(int li) {
             for (int i = 0; i < tietDauNgay.length; i++) {
-                if (tietDauNgay[i] <= li) {
+                if (tietDauNgay[i] <= li)
                     return tietDauNgay[i];
-                }
             }
             return null;
         }
@@ -288,11 +339,12 @@ public class ModuleArrangingSubject {
             for (int ssi = 0; ssi < allSubsInDay.length; ssi++) {
                 Subject mon = allSubsInDay[ssi];
                 if (runIndex >= startIndex && ssi <= si) {
+                    log("runIndex %s, startIndex %s, ssi %s, si %s", runIndex, startIndex, ssi, si);
                     output.add(mon);
                 }
                 runIndex += mon.soTiet;
             }
-
+            log("output = " + output);
             return output.toArray(new Subject[output.size()]);
         }
     }
