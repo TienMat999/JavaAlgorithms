@@ -12,9 +12,9 @@ public class ModuleArrangingSubject {
         ModuleArrangingSubject.ClassPermutationsListener listener = new ModuleArrangingSubject.ClassPermutationsListener(listSubjectValidationInfo);
 
         ArrayList<ModuleArrangingSubject.Subject> subjects = new ArrayList<>();
-        subjects.add(mon("2:Toan:TN:1"));
-        subjects.add(mon("2:Toan:TN:1"));
-        subjects.add(mon("2:Toan:TN:1"));
+        subjects.add(mon("2:Toan:TN:0"));
+        subjects.add(mon("2:Toan:TN:0"));
+        subjects.add(mon("2:Toan:TN:0"));
         subjects.add(mon("1:Toan:TN:0"));
         subjects.add(mon("2:Ly:TN:1"));
         subjects.add(mon("2:Ly:TN:1"));
@@ -197,8 +197,7 @@ public class ModuleArrangingSubject {
 
             if (checkTietDaVuotQuaBuoi(subs, li, si)) return false;
             if (!checkValidAspiration(subs[si].tenMonHoc, li)) return false;
-//            if (!checkMonCach1Ngay(subs, li, si)) return false;
-
+            if (!checkMonCach1Ngay(subs, li, si)) return false;
 
             if (laMonCuoiCungTrongNgay(li, si, subs)) {
                 Subject[] monhocHomNays = listTietHocTrongHomNay(subs, li, si);
