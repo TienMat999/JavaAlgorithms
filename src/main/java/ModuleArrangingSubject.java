@@ -110,22 +110,6 @@ public class ModuleArrangingSubject {
             return false;
         }
 
-        private boolean isBeside3(ModuleArrangingSubject.Subject[] subs, int si) {
-            if (si < subs.length) {
-                if (si >= 1 && subs[si - 1].isSameSubName(subs[si])) {
-                    return true;
-                }
-                if (si >= 2 && subs[si - 2].isSameSubName(subs[si])) {
-                    return true;
-                }
-                if (si >= 3 && subs[si - 3].isSameSubName(subs[si])) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-
     }
 
     @Data
@@ -189,7 +173,7 @@ public class ModuleArrangingSubject {
             teacherAspirations.add(new TeacherAspiration(name, tempt));
         }
 
-        boolean validAspiration(String sub, int wli) {
+        boolean checkValidAspiration(String sub, int wli) {
             for (TeacherAspiration a : teacherAspirations) {
                 if (!a.subName.equals(sub)) continue;
                 for (int i : a.offLessionIndex) {
@@ -211,21 +195,19 @@ public class ModuleArrangingSubject {
         boolean hopLe(Subject[] subs, int si) {
             int li = startLessionIndexInWeek(subs, si);
 
-            if (tietVuotQuaBuoi(subs, li, si)) {
-                return false;
-            }
+            if (checkTietDaVuotQuaBuoi(subs, li, si)) return false;
+            if (!checkValidAspiration(subs[si].tenMonHoc, li)) return false;
+//            if (!checkMonCach1Ngay(subs, li, si)) return false;
 
-            if (!validAspiration(subs[si].tenMonHoc, li)) {
-                return false;
-            }
 
             if (laMonCuoiCungTrongNgay(li, si, subs)) {
                 Subject[] monhocHomNays = listTietHocTrongHomNay(subs, li, si);
 
-                if (demSoTietTuNhien(monhocHomNays) > soMonTuNhienMaxTrongNgay) return false;
-                if (demSoTietXaHoi(monhocHomNays) > soMonXahoiMaxTrongNgay) return false;
+//                if (demSoTietTuNhien(monhocHomNays) > soMonTuNhienMaxTrongNgay) return false;
+//                if (demSoTietXaHoi(monhocHomNays) > soMonXahoiMaxTrongNgay) return false;
                 if (soMonHoc(monhocHomNays) > soMonToiDaTrongHomNay(li)) return false;
             }
+            if (checkBiTrungMonTrongNgay(subs, li, si)) return false;
             return true;
         }
 
@@ -249,7 +231,8 @@ public class ModuleArrangingSubject {
             return count;
         }
 
-        private int startLessionIndexInWeek(Subject[] subs, int si) {
+        private Integer startLessionIndexInWeek(Subject[] subs, int si) {
+            if (si < 0) return null;
             int tiet = 0;
             for (int i = 0; i < si; i++) {
                 tiet += subs[i].soTiet;
@@ -267,7 +250,40 @@ public class ModuleArrangingSubject {
             return false;
         }
 
-        private boolean tietVuotQuaBuoi(Subject[] subs, int li, int si) {
+        private boolean checkMonCach1Ngay(Subject[] allSubs, int li, int si) {
+            Subject mon = allSubs[si];
+            if(mon.cach1Ngay == false) return true;
+
+            Subject[] listTietHocHomQua = listTietHocTrongHomQua(allSubs, li, si);
+            if (listTietHocHomQua == null) return true;
+
+            for (Subject tietHocHomQua : listTietHocHomQua) {
+                if (mon == tietHocHomQua) continue;
+                if (tietHocHomQua.toString().equals(mon.toString())) return false;
+            }
+            return true;
+        }
+
+        private boolean checkBiTrungMonTrongNgay(Subject[] allSubs, int li, int si) {
+            Subject[] listTietHocHomNay = listTietHocTrongHomNay(allSubs, li, si);
+            Set<String> check = new HashSet<>();
+            for(Subject mon: listTietHocHomNay) {
+                if(check.add(mon.tenMonHoc) == false) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private String toString(Subject[] subs) {
+            String ss = "List:";
+            for (int i = 0; i < subs.length; i++) {
+                ss += subs[i].toString() + "-";
+            }
+            return ss;
+        }
+
+        private boolean checkTietDaVuotQuaBuoi(Subject[] subs, int li, int si) {
             int soTiet = subs[si].soTiet;
             for (int day = 0; day < tietCuoiSlot.length; day++) {
 
@@ -295,23 +311,32 @@ public class ModuleArrangingSubject {
         }
 
         private int soMonToiDaTrongHomNay(int li) {
-            int n = soTietTrongHomNay(li);
-            return (n <= 6) ? 3 : 4;
+            return 4;
+//            int n = soTietTrongHomNay(li);
+//            return (n <= 6) ? 4 : 5;
         }
 
-        private Integer indexCuaTietDauTienNgayHomQua(int li) {
-            for (int i = 1; i < tietDauNgay.length; i++) {
-                if (li <= tietDauNgay[i]) {
-                    return tietDauNgay[i - 1];
-                }
-            }
-            return null;
-        }
 
         private Integer indexCuaTietDauTienNgayHomNay(int li) {
             for (int i = 0; i < tietDauNgay.length; i++) {
                 if (tietDauNgay[i] <= li && tietCuoiNgay[i] >= li)
                     return tietDauNgay[i];
+            }
+            return null;
+        }
+
+        private Integer indexCuaTietDauTienNgayHomQua(int li) {
+            for (int i = 1; i < tietDauNgay.length; i++) {
+                if (tietDauNgay[i] <= li && tietCuoiNgay[i] >= li)
+                    return tietDauNgay[i - 1];
+            }
+            return null;
+        }
+
+        private Integer indexCuaTietCuoiCungNgayHomQua(int li) {
+            for (int i = 1; i < tietDauNgay.length; i++) {
+                if (tietDauNgay[i] <= li && tietCuoiNgay[i] >= li)
+                    return tietCuoiNgay[i - 1];
             }
             return null;
         }
@@ -332,7 +357,24 @@ public class ModuleArrangingSubject {
 
             for (int ssi = 0; ssi < allSubsInDay.length; ssi++) {
                 Subject mon = allSubsInDay[ssi];
-                if (runIndex >= startIndex && ssi < si) {
+                if (runIndex >= startIndex && ssi <= si) {
+                    output.add(mon);
+                }
+                runIndex += mon.soTiet;
+            }
+            return output.toArray(new Subject[output.size()]);
+        }
+
+        private Subject[] listTietHocTrongHomQua(Subject[] allSubsInWeek, int li, int si) {
+            Integer startIndex = indexCuaTietDauTienNgayHomQua(li);
+            Integer lastIndex = startLessionIndexInWeek(allSubsInWeek, si);
+            if (startIndex == null || lastIndex == null) return null;
+            int runIndex = 0;
+            ArrayList<Subject> output = new ArrayList<>();
+
+            for (int ssi = 0; ssi < allSubsInWeek.length; ssi++) {
+                Subject mon = allSubsInWeek[ssi];
+                if (runIndex >= startIndex && runIndex <= lastIndex) {
                     output.add(mon);
                 }
                 runIndex += mon.soTiet;
