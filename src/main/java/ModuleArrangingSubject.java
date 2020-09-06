@@ -15,7 +15,7 @@ public class ModuleArrangingSubject {
         subjects.add(mon("2:Toan:TN:0"));
         subjects.add(mon("2:Toan:TN:0"));
         subjects.add(mon("2:Toan:TN:0"));
-        subjects.add(mon("1:Toan:TN:0"));
+        subjects.add(mon("2:Toan:TN:0"));
         subjects.add(mon("2:Ly:TN:1"));
         subjects.add(mon("2:Ly:TN:1"));
         subjects.add(mon("2:Hoa:TN:1"));
@@ -31,7 +31,6 @@ public class ModuleArrangingSubject {
         subjects.add(mon("2:KTCN:TN:0"));
         subjects.add(mon("2:AV:XH:1"));
         subjects.add(mon("2:AV:XH:1"));
-        subjects.add(mon("1:AV:XH:1"));
 
         listSubjectValidationInfo.addOffAspiration("Ly", 14, 21);
         listSubjectValidationInfo.addOffAspiration("Dia", 14, 21);
@@ -51,7 +50,9 @@ public class ModuleArrangingSubject {
         PermutationsUse<ModuleArrangingSubject.Subject> permute = new PermutationsUse<ModuleArrangingSubject.Subject>(listener);
 
         System.out.println(
-                permute.permuteUnique(subjects.toArray(new ModuleArrangingSubject.Subject[subjects.size()])).size()
+                permute.permuteUnique(
+                        subjects.toArray(new ModuleArrangingSubject.Subject[subjects.size()])
+                ).size()
         );
     }
 
@@ -84,7 +85,7 @@ public class ModuleArrangingSubject {
 
         @Override
         public boolean acceptableForGoNext(ModuleArrangingSubject.Subject[] all, int index) {
-            if (hasSameSubjectInDay(all, index)) return false;
+//            if (hasSameSubjectInDay(all, index)) return false;
             if (listSubjectValidationInfo.hopLe(all, index) == false) return false;
 
             return true;
