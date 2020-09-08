@@ -1,6 +1,9 @@
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 
@@ -49,10 +52,8 @@ public class ModuleArrangingSubject {
 
         PermutationsUse<ModuleArrangingSubject.Subject> permute = new PermutationsUse<ModuleArrangingSubject.Subject>(listener);
 
-        System.out.println(
-                permute.permuteUnique(
-                        subjects.toArray(new ModuleArrangingSubject.Subject[subjects.size()])
-                ).size()
+        permute.permuteUnique(
+                subjects.toArray(new ModuleArrangingSubject.Subject[subjects.size()])
         );
     }
 
@@ -73,14 +74,25 @@ public class ModuleArrangingSubject {
 
     static class ClassPermutationsListener implements PermutationsListener<Subject> {
         final ListSubjectValidation listSubjectValidationInfo;
-
+        BufferedWriter writer;
         ClassPermutationsListener(ListSubjectValidation listSubjectValidationInfo) {
             this.listSubjectValidationInfo = listSubjectValidationInfo;
+            try {
+                writer = new BufferedWriter(new FileWriter("output"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
         public void onResult(List<ModuleArrangingSubject.Subject> array) {
-            System.out.println(array);
+//            System.out.println(array);
+            try {
+                writer.write(array.toString());
+                writer.write("\n");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
@@ -89,6 +101,15 @@ public class ModuleArrangingSubject {
             if (listSubjectValidationInfo.hopLe(all, index) == false) return false;
 
             return true;
+        }
+
+        @Override
+        public void end() {
+            try {
+                writer.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         private boolean hasSameSubjectInDay(ModuleArrangingSubject.Subject[] subs, int si) {
@@ -198,7 +219,7 @@ public class ModuleArrangingSubject {
 
             if (checkTietDaVuotQuaBuoi(subs, li, si)) return false;
             if (!checkValidAspiration(subs[si].tenMonHoc, li)) return false;
-            if (!checkMonCach1Ngay(subs, li, si)) return false;
+//            if (!checkMonCach1Ngay(subs, li, si)) return false;
 
             if (laMonCuoiCungTrongNgay(li, si, subs)) {
                 Subject[] monhocHomNays = listTietHocTrongHomNay(subs, li, si);

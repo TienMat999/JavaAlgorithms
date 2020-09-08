@@ -7,12 +7,12 @@ public class PermutationsUse<DATA> {
 
     private final PermutationsListener<DATA> listener;
 
-    public List<List<DATA>> permuteUnique(DATA[] nums) {
-        List<List<DATA>> bigList = new ArrayList<>();
+    public void permuteUnique(DATA[] nums) {
         Arrays.sort(nums);
         permute(nums, 0);
-        return bigList;
+        listener.end();
     }
+
 
     private void permute(DATA[] nums, int index) {
         if (index == nums.length) {
