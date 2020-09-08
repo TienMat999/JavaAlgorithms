@@ -86,7 +86,7 @@ public class ModuleArrangingSubject {
 
         @Override
         public void onResult(List<ModuleArrangingSubject.Subject> array) {
-//            System.out.println(array);
+            System.out.println(array);
             try {
                 writer.write(array.toString());
                 writer.write("\n");
